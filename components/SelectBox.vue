@@ -1,18 +1,16 @@
 <template>
-  <div>
-    <select v-model="selectedOption" @change="changed">
-      <option
-        v-for="option in props.options"
-        :key="option.value"
-        :value="option.value"
-      >
-        {{ option.label }}
-      </option>
-    </select>
-
-    <!-- 現在の選択 -->
-    <p>選択された値: {{ selectedOption }}</p>
-  </div>
+  <select v-model="selectedOption" @change="changed">
+    <option v-if="props.placeholder != ''" value="" disabled selected>
+      {{ placeholder }}
+    </option>
+    <option
+      v-for="option in props.options"
+      :key="option.value"
+      :value="option.value"
+    >
+      {{ option.label }}
+    </option>
+  </select>
 </template>
 
 <script setup>
@@ -21,21 +19,18 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  placeholder: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits();
-const selectedOption = ref();
+const selectedOption = ref("");
 
 const changed = () => {
   emit("update", selectedOption.value);
 };
-
-watch(
-  () => props.options,
-  () => {
-    selectedOption.value = props.options[0].value;
-  }
-);
 </script>
 
 <style scoped></style>
