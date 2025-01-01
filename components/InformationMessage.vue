@@ -1,20 +1,18 @@
-<!-- template -->
 <template>
   <div class="information-message">
     <span>{{ displayedText }}</span>
   </div>
 </template>
 
-<!-- script -->
 <script setup>
 const props = defineProps({
   text: {
-    type: String, // 文字列型
-    required: true, // 必須
+    type: String,
+    required: true,
   },
 });
 
-const displayedText = ref(""); // 表示される文字列
+const displayedText = ref("");
 
 watch(
   () => props.text,
@@ -23,7 +21,6 @@ watch(
   }
 );
 
-// タイピングエフェクトのロジック
 const startTyping = (index) => {
   const type = () => {
     if (index < props.text.length) {
@@ -37,5 +34,4 @@ const startTyping = (index) => {
 };
 </script>
 
-<!-- style -->
 <style scoped></style>
