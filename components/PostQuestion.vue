@@ -18,7 +18,28 @@
       />
     </div>
 
-    <div class="create-option-division">
+    <div
+      v-if="selectedCategoryOption === 'choice'"
+      class="create-option-division"
+    >
+      <SelectBox
+        placeholder="元勲を選択"
+        @update="updateSelectedGenkunOption"
+        :options="genkunOptions"
+      />
+      <SelectBox
+        placeholder="正解を選択"
+        @update="updateSelectedCorrectOption"
+        :options="correctOptions"
+      />
+      <button @click="appendSelectedInfos">追加</button>
+      <button @click="register">登録</button>
+    </div>
+
+    <div
+      v-if="selectedCategoryOption === 'order'"
+      class="create-option-division"
+    >
       <SelectBox
         placeholder="元勲を選択"
         @update="updateSelectedGenkunOption"
@@ -63,6 +84,24 @@ const selectedSequence = ref(1);
 const message = ref("");
 
 const updateSelectedCategoryOption = (selected) => {
+  switch (selected) {
+    case "choice":
+      correctOptions.value = [
+        { value: "o", label: "o" },
+        { value: "x", label: "x" },
+      ];
+      break;
+    case "order":
+      correctOptions.value = [
+        { value: "1", label: "1" },
+        { value: "2", label: "2" },
+        { value: "3", label: "3" },
+        { value: "4", label: "4" },
+      ];
+      break;
+  }
+
+  selectedInfos.value = [];
   selectedCategoryOption.value = selected;
 };
 
@@ -89,6 +128,9 @@ const appendSelectedInfos = () => {
       correct: selectedCorrectOption.value,
     },
   ];
+
+  reconstructCorrectOptions();
+
   selectedSequence.value++;
 };
 
@@ -141,11 +183,40 @@ const reconstructSelectedInfos = (id) => {
     }
     return [...acc, cur];
   }, []);
+  reconstructCorrectOptions();
+};
+
+const reconstructCorrectOptions = () => {
+  switch (selectedCategoryOption.value) {
+    case "choice":
+      if (selectedInfos.value.find((e) => e.correct === "o")) {
+        correctOptions.value = [{ value: "x", label: "x" }];
+      } else {
+        correctOptions.value = [
+          { value: "o", label: "o" },
+          { value: "x", label: "x" },
+        ];
+      }
+      break;
+    case "order":
+      correctOptions.value = ["1", "2", "3", "4"].reduce((acc, cur) => {
+        if (selectedInfos.value.find((e) => e.correct === cur)) {
+          return acc;
+        }
+        return [
+          ...acc,
+          {
+            value: cur,
+            label: cur,
+          },
+        ];
+      }, []);
+      break;
+  }
 };
 
 onMounted(async () => {
   await $fetch("http://localhost:2434/genkuns", {}).then((res) => {
-    console.log(res);
     genkunOptions.value = res.reduce((acc, cur) => {
       return [
         ...acc,
@@ -160,11 +231,6 @@ onMounted(async () => {
   categoryOptions.value = [
     { value: "choice", label: "4択問題" },
     { value: "order", label: "順番問題" },
-  ];
-
-  correctOptions.value = [
-    { value: "o", label: "○" },
-    { value: "x", label: "×" },
   ];
 });
 </script>

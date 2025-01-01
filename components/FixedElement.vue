@@ -2,6 +2,10 @@
   <div class="fixed-element">
     <img v-if="correct === 'o'" src="/abstracts/o.png" class="correct-icon" />
     <img v-if="correct === 'x'" src="/abstracts/x.png" class="correct-icon" />
+    <img v-if="correct === '1'" src="/abstracts/_1g.png" class="correct-icon" />
+    <img v-if="correct === '2'" src="/abstracts/_2g.png" class="correct-icon" />
+    <img v-if="correct === '3'" src="/abstracts/_3g.png" class="correct-icon" />
+    <img v-if="correct === '4'" src="/abstracts/_4g.png" class="correct-icon" />
     {{ display }}
     <div class="close-button" @click="clicked"></div>
   </div>
